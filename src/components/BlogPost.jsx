@@ -6,6 +6,7 @@ import PostInteractions from './PostInteractions';
 import PostCard from './PostCard';
 import { getAllPosts, getPostBySlug } from '../posts';
 import { getPostMetrics, recordPostRead } from '../postMetrics';
+import { getAssetUrl } from '../utils/assets';
 
 /**
  * BlogPost — Full blog post renderer.
@@ -162,7 +163,7 @@ export default function BlogPost({ slug }) {
   // Dynamic custom background support (reverts to default when unmounting)
   useEffect(() => {
     if (meta.background) {
-      document.documentElement.style.setProperty('--bg-image', `url("${meta.background}")`);
+      document.documentElement.style.setProperty('--bg-image', `url("${getAssetUrl(meta.background)}")`);
     }
     return () => {
       document.documentElement.style.removeProperty('--bg-image');
@@ -184,7 +185,6 @@ export default function BlogPost({ slug }) {
   const renderer = new marked.Renderer();
   renderer.image = ({ href, title, text }) => {
     let src = href;
-    const basePath = import.meta.env.BASE_URL || '/';
     if (
       src &&
       !src.startsWith('http://') &&
@@ -197,8 +197,8 @@ export default function BlogPost({ slug }) {
       const isDirectFile = /(?:posts|public\/posts|src\/posts)\/[^/]+\.md$/i.test(normalizedFilePath);
       const cleanSrc = src.replace(/^\.\//, '');
       src = isDirectFile
-        ? `${basePath}posts/${cleanSrc}`
-        : `${basePath}posts/${slug}/${cleanSrc}`;
+        ? getAssetUrl(`posts/${cleanSrc}`)
+        : getAssetUrl(`posts/${slug}/${cleanSrc}`);
     }
     const titleAttr = title ? ` title="${title}"` : '';
     const altAttr = text ? ` alt="${text}"` : '';

@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { getAssetUrl } from '../utils/assets';
 
 /**
  * WorldMapGrid — Interactive canvas featuring the user's exact world map outline image
@@ -48,9 +49,8 @@ export default function WorldMapGrid({ showMap = true }) {
     let mapLoaded = false;
     let mapOpacity = showMapRef.current ? 1.0 : 0.0;
 
-    const basePath = import.meta.env.BASE_URL || '/';
     const img = new Image();
-    img.src = `${basePath.endsWith('/') ? basePath : basePath + '/'}world-map.png`;
+    img.src = getAssetUrl('world-map.png');
     if (img.complete && img.naturalWidth > 0) {
       mapImage = img;
       processMapImage();

@@ -12,6 +12,7 @@
  */
 
 import { siteConfig } from './site.config';
+import { getAssetUrl } from './utils/assets';
 
 function getSlugFromPath(filePath, metaSlug) {
   if (metaSlug) return metaSlug;
@@ -42,14 +43,13 @@ function resolvePostAssetPath(filePath, slug, assetPath) {
     return normalized;
   }
 
-  const basePath = import.meta.env.BASE_URL || '/';
   const cleanAssetPath = normalized.replace(/^\.\//, '');
   const normalizedFilePath = String(filePath || '').replace(/\\/g, '/');
   const isDirectFile = /(?:posts|public\/posts|src\/posts)\/[^/]+\.md$/i.test(normalizedFilePath);
 
   return isDirectFile
-    ? `${basePath}posts/${cleanAssetPath}`
-    : `${basePath}posts/${slug}/${cleanAssetPath}`;
+    ? getAssetUrl(`posts/${cleanAssetPath}`)
+    : getAssetUrl(`posts/${slug}/${cleanAssetPath}`);
 }
 
 /**

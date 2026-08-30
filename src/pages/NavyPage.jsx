@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 import { getAllPosts } from '../posts';
+import { getAssetUrl } from '../utils/assets';
 
 /**
  * NavyPage — Dedicated page for the Indian Navy with navy.jpg background.
  * Oceanic navy-blue and gold theme with custom header font styling and Navy stories.
  */
 export default function NavyPage() {
-  const basePath = import.meta.env.BASE_URL || '/';
   const allPosts = getAllPosts();
 
   // Filter stories related to the Navy
@@ -25,7 +25,7 @@ export default function NavyPage() {
   );
 
   useEffect(() => {
-    const bg = `url("${basePath}navy.jpg")`;
+    const bg = `url("${getAssetUrl('navy.jpg')}")`;
     document.documentElement.style.setProperty('--bg-image', bg);
     document.documentElement.style.setProperty(
       '--service-overlay',
@@ -36,7 +36,7 @@ export default function NavyPage() {
       document.documentElement.style.removeProperty('--bg-image');
       document.documentElement.style.removeProperty('--service-overlay');
     };
-  }, [basePath]);
+  }, []);
 
   return (
     <div className="service-page service-page--navy fade-in">
@@ -52,7 +52,7 @@ export default function NavyPage() {
       <div className="service-page__hero-top">
         <div className="service-page__avatar-wrapper">
           <img
-            src={`${basePath}Indian_Navy_Insignia.png`}
+            src={getAssetUrl('Indian_Navy_Insignia.png')}
             alt="Indian Navy Insignia"
             className="service-page__avatar"
           />

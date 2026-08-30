@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 import { getAllPosts } from '../posts';
+import { getAssetUrl } from '../utils/assets';
 
 /**
  * ArmyPage — Dedicated page for the Indian Army with army.jpg background.
  * Military olive-green colour theme with custom header font styling and Army stories.
  */
 export default function ArmyPage() {
-  const basePath = import.meta.env.BASE_URL || '/';
   const allPosts = getAllPosts();
   
   // Filter stories related to the Army
@@ -28,7 +28,7 @@ export default function ArmyPage() {
   );
 
   useEffect(() => {
-    const bg = `url("${basePath}army.jpg")`;
+    const bg = `url("${getAssetUrl('army.jpg')}")`;
     document.documentElement.style.setProperty('--bg-image', bg);
     document.documentElement.style.setProperty(
       '--service-overlay',
@@ -39,7 +39,7 @@ export default function ArmyPage() {
       document.documentElement.style.removeProperty('--bg-image');
       document.documentElement.style.removeProperty('--service-overlay');
     };
-  }, [basePath]);
+  }, []);
 
   return (
     <div className="service-page service-page--army fade-in">
@@ -55,7 +55,7 @@ export default function ArmyPage() {
       <div className="service-page__hero-top">
         <div className="service-page__avatar-wrapper">
           <img
-            src={`${basePath}Indian_Army_Circular_Insignia.png`}
+            src={getAssetUrl('Indian_Army_Circular_Insignia.png')}
             alt="Indian Army Insignia"
             className="service-page__avatar"
           />

@@ -125,7 +125,7 @@ body::before {
   width: calc(100% + 16px);
   height: calc(100% + 16px);
   z-index: -2;
-  background-image: var(--bg-image, url('/mushishi-bg1.jpg'));
+  background-image: var(--bg-image);
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;

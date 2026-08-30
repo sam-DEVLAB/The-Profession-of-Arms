@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 import { getAllPosts } from '../posts';
+import { getAssetUrl } from '../utils/assets';
 
 /**
  * AirForcePage — Dedicated page for the Indian Air Force with airforce.jpeg background.
  * Sky-blue and cyan theme with custom header font styling and Air Force stories.
  */
 export default function AirForcePage() {
-  const basePath = import.meta.env.BASE_URL || '/';
   const allPosts = getAllPosts();
 
   // Filter stories related to the Air Force
@@ -27,7 +27,7 @@ export default function AirForcePage() {
   );
 
   useEffect(() => {
-    const bg = `url("${basePath}airforce.jpeg")`;
+    const bg = `url("${getAssetUrl('airforce.jpeg')}")`;
     document.documentElement.style.setProperty('--bg-image', bg);
     document.documentElement.style.setProperty(
       '--service-overlay',
@@ -38,7 +38,7 @@ export default function AirForcePage() {
       document.documentElement.style.removeProperty('--bg-image');
       document.documentElement.style.removeProperty('--service-overlay');
     };
-  }, [basePath]);
+  }, []);
 
   return (
     <div className="service-page service-page--airforce fade-in">
@@ -54,7 +54,7 @@ export default function AirForcePage() {
       <div className="service-page__hero-top">
         <div className="service-page__avatar-wrapper">
           <img
-            src={`${basePath}Indian_Air_Force_Crest.png`}
+            src={getAssetUrl('Indian_Air_Force_Crest.png')}
             alt="Indian Air Force Crest"
             className="service-page__avatar"
           />

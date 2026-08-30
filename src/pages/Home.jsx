@@ -6,6 +6,7 @@ import BlogShowcase from '../components/BlogShowcase';
 import { getAllPosts } from '../posts';
 import { getPostMetrics } from '../postMetrics';
 import { siteConfig } from '../site.config';
+import { getAssetUrl } from '../utils/assets';
 
 const TYPING_PHRASES = [
   'SACRIFICED THEIR TODAY FOR OUR TOMORROW',
@@ -24,7 +25,6 @@ export default function Home() {
   const [postMetrics, setPostMetrics] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
   const [homeSearchQuery, setHomeSearchQuery] = useState('');
-  const basePath = import.meta.env.BASE_URL || '/';
 
   useEffect(() => {
     const metrics = {};
@@ -66,8 +66,8 @@ export default function Home() {
   }, [currentText, isDeleting, phraseIndex]);
 
   useEffect(() => {
-    const bgHero = `url("${basePath}mushishi-bg1.jpg")`;
-    const bgStories = `url("${basePath}mushishi-bg.jpg")`;
+    const bgHero = `url("${getAssetUrl('mushishi-bg1.jpg')}")`;
+    const bgStories = `url("${getAssetUrl('mushishi-bg.jpg')}")`;
 
     // Start with mushishi-bg1.jpg
     document.documentElement.style.setProperty('--bg-image', bgHero);
@@ -100,21 +100,19 @@ export default function Home() {
       observer.disconnect();
       document.documentElement.style.removeProperty('--bg-image');
     };
-  }, [basePath]);
+  }, []);
 
   const avatarSrc = siteConfig.hero.avatar
-    ? (siteConfig.hero.avatar.startsWith('http') || siteConfig.hero.avatar.startsWith('/')
-      ? siteConfig.hero.avatar
-      : `${basePath}${siteConfig.hero.avatar}`)
+    ? getAssetUrl(siteConfig.hero.avatar)
     : null;
 
   useEffect(() => {
     const imagesToPreload = [
       avatarSrc,
-      `${basePath}Indian_Armed_Forces_Triservices.png`,
-      `${basePath}Indian_Army_Circular_Insignia.png`,
-      `${basePath}Indian_Navy_Insignia.png`,
-      `${basePath}Indian_Air_Force_Crest.png`,
+      getAssetUrl('Indian_Armed_Forces_Triservices.png'),
+      getAssetUrl('Indian_Army_Circular_Insignia.png'),
+      getAssetUrl('Indian_Navy_Insignia.png'),
+      getAssetUrl('Indian_Air_Force_Crest.png'),
     ].filter(Boolean);
 
     imagesToPreload.forEach((src) => {
@@ -124,79 +122,55 @@ export default function Home() {
         img.decode().catch(() => {});
       }
     });
-  }, [avatarSrc, basePath]);
+  }, [avatarSrc]);
 
   const handleFlip = () => setIsFlipped((prev) => !prev);
 
-  // Format date for menu list
-  const fmtDate = (d) =>
-    new Date(d).toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-
   const filteredHomePosts = useMemo(() => {
     const q = homeSearchQuery.trim().toLowerCase();
-    if (!q) return posts;
+    if (!q) return [];
+    return posts.filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.excerpt.toLowerCase().includes(q) ||
+        (p.tags && p.tags.some((t) => t.toLowerCase().includes(q)))
+    );
+  }, [posts, homeSearchQuery]);
 
-    return posts.filter((post) => {
-      const haystack = [
-        post.title,
-        post.excerpt,
-        post.slug,
-        ...(post.tags || []),
-        post.author,
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-
-      return haystack.includes(q);
-    });
-  }, [homeSearchQuery, posts]);
-
-  // Dynamic preview of service name & theme on hovering badges in flip state
   const handleBadgeHover = (service) => {
-    if (service === 'army') {
-      window.dispatchEvent(new CustomEvent('header-title-change', { detail: 'THE INDIAN ARMY' }));
-    } else if (service === 'navy') {
-      window.dispatchEvent(new CustomEvent('header-title-change', { detail: 'THE INDIAN NAVY' }));
-    } else if (service === 'airforce') {
-      window.dispatchEvent(new CustomEvent('header-title-change', { detail: 'THE INDIAN AIR FORCE' }));
-    } else {
-      window.dispatchEvent(new CustomEvent('header-title-change', { detail: null }));
-    }
+    const titles = {
+      army: 'THE INDIAN ARMY',
+      navy: 'THE INDIAN NAVY',
+      airforce: 'THE INDIAN AIR FORCE',
+    };
+    window.dispatchEvent(
+      new CustomEvent('header-title-change', {
+        detail: titles[service] || null,
+      })
+    );
   };
 
-  // Revert preview on unmount or flip change
-  useEffect(() => {
-    return () => {
-      window.dispatchEvent(new CustomEvent('header-title-change', { detail: null }));
-    };
-  }, [isFlipped]);
-
   return (
-    <div className="fade-in" id="home-page">
-      {/* ---- Hero Section ---- */}
-      <section className="home__hero" id="about-section">
-        <WorldMapGrid showMap />
+    <div className="home fade-in" id="home-page">
+      {/* ---- Interactive Hero Section ---- */}
+      <section className="home__hero" id="home-hero">
+        <WorldMapGrid />
 
         <div className="home__hero-inner">
-          {/* ---- Left Side: Hero text OR Slide-out service badges ---- */}
+          {/* ---- Left Side: Animated Text & Tri-Services Slide-out ---- */}
           <div className="home__hero-left">
-            {/* Front: Hero text with animated typing phrase */}
-            <div className={`hero-content-face ${isFlipped ? 'hero-content-face--hidden' : 'hero-content-face--visible'}`}>
+            {/* Front: Typing Headline & Subtitle */}
+            <div
+              className={`hero-content-face ${isFlipped ? 'hero-content-face--hidden' : 'hero-content-face--visible'}`}
+            >
               <h2 className="home__hero-title">
-                <span className="home__hero-title-prefix">In hallowed memory of those who</span>
+                <span className="home__hero-title-prefix">STORIES OF THE BRAVEHEARTS WHO</span>
                 <span className="home__hero-typed-wrapper">
                   <span className="home__hero-typed-text">{currentText}</span>
-                  <span className="home__hero-cursor" aria-hidden="true">|</span>
+                  <span className="home__hero-cursor">|</span>
                 </span>
               </h2>
-              {siteConfig.hero.subtitle && (
-                <p className="home__hero-subtitle">{siteConfig.hero.subtitle}</p>
-              )}
+              <p className="home__hero-subtitle">{siteConfig.description}</p>
             </div>
 
             {/* Back: Three armed forces logos sliding out (pure insignias, no text, themed glow) */}
@@ -215,7 +189,7 @@ export default function Home() {
                   onMouseLeave={() => handleBadgeHover(null)}
                 >
                   <img
-                    src={`${basePath}Indian_Army_Circular_Insignia.png`}
+                    src={getAssetUrl('Indian_Army_Circular_Insignia.png')}
                     alt="Indian Army Insignia"
                     className="hero-service-logo__img"
                   />
@@ -231,7 +205,7 @@ export default function Home() {
                   onMouseLeave={() => handleBadgeHover(null)}
                 >
                   <img
-                    src={`${basePath}Indian_Navy_Insignia.png`}
+                    src={getAssetUrl('Indian_Navy_Insignia.png')}
                     alt="Indian Navy Insignia"
                     className="hero-service-logo__img"
                   />
@@ -247,7 +221,7 @@ export default function Home() {
                   onMouseLeave={() => handleBadgeHover(null)}
                 >
                   <img
-                    src={`${basePath}Indian_Air_Force_Crest.png`}
+                    src={getAssetUrl('Indian_Air_Force_Crest.png')}
                     alt="Indian Air Force Crest"
                     className="hero-service-logo__img"
                   />
@@ -289,7 +263,7 @@ export default function Home() {
               <div className="hero-flip-back">
                 <div className="home__hero-avatar-wrapper home__hero-avatar-wrapper--back">
                   <img
-                    src={`${basePath}Indian_Armed_Forces_Triservices.png`}
+                    src={getAssetUrl('Indian_Armed_Forces_Triservices.png')}
                     alt="Indian Armed Forces Triservices Emblem"
                     className="home__hero-avatar home__hero-avatar--back"
                   />
