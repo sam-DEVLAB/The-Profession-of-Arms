@@ -159,18 +159,17 @@ export default function Home() {
         <div className="home__hero-inner">
           {/* ---- Left Side: Animated Text & Tri-Services Slide-out ---- */}
           <div className="home__hero-left">
-            {/* Front: Typing Headline & Subtitle */}
+            {/* Front: Typing Headline */}
             <div
               className={`hero-content-face ${isFlipped ? 'hero-content-face--hidden' : 'hero-content-face--visible'}`}
             >
               <h2 className="home__hero-title">
-                <span className="home__hero-title-prefix">STORIES OF THE BRAVEHEARTS WHO</span>
+                <span className="home__hero-title-prefix">IN HALLOWED MEMORIES OF THOSE WHO</span>
                 <span className="home__hero-typed-wrapper">
                   <span className="home__hero-typed-text">{currentText}</span>
                   <span className="home__hero-cursor">|</span>
                 </span>
               </h2>
-              <p className="home__hero-subtitle">{siteConfig.description}</p>
             </div>
 
             {/* Back: Three armed forces logos sliding out (pure insignias, no text, themed glow) */}

@@ -24,9 +24,9 @@ export default function BlogPost({ slug }) {
   const [metrics, setMetrics] = useState(() => getPostMetrics(slug));
   const [readerTheme, setReaderTheme] = useState(() => {
     try {
-      return localStorage.getItem('pe_reader_theme') || 'light';
+      return localStorage.getItem('pe_reader_theme') || 'dark';
     } catch {
-      return 'light';
+      return 'dark';
     }
   });
   const [fontScale, setFontScale] = useState(() => {
