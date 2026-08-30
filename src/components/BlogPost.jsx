@@ -24,7 +24,8 @@ export default function BlogPost({ slug }) {
   const [metrics, setMetrics] = useState(() => getPostMetrics(slug));
   const [readerTheme, setReaderTheme] = useState(() => {
     try {
-      return localStorage.getItem('pe_reader_theme') || 'dark';
+      const saved = localStorage.getItem('pe_reader_theme');
+      return saved === 'light' ? 'light' : 'dark';
     } catch {
       return 'dark';
     }
@@ -170,6 +171,56 @@ export default function BlogPost({ slug }) {
     };
   }, [meta.background]);
 
+  // Custom marked renderer to resolve relative image paths
+  const safeHtml = useMemo(() => {
+    if (!body) return '';
+    try {
+      const renderer = new marked.Renderer();
+      renderer.image = (token, titleArg, textArg) => {
+        const href = typeof token === 'object' && token !== null ? token.href : token;
+        const title = typeof token === 'object' && token !== null ? token.title : titleArg;
+        const text = typeof token === 'object' && token !== null ? token.text : textArg;
+        let src = href || '';
+        if (
+          src &&
+          !src.startsWith('http://') &&
+          !src.startsWith('https://') &&
+          !src.startsWith('data:') &&
+          !src.startsWith('/') &&
+          !src.startsWith('#')
+        ) {
+          const cleanSrc = src.replace(/^\.\//, '');
+          src = getAssetUrl(`posts/${cleanSrc}`);
+        }
+        const titleAttr = title ? ` title="${title}"` : '';
+        const altAttr = text ? ` alt="${text}"` : '';
+        return `<img src="${src}"${altAttr}${titleAttr} loading="lazy" />`;
+      };
+
+      const rawHtml = marked.parse(body, {
+        breaks: false,
+        gfm: true,
+        renderer,
+      });
+
+      return DOMPurify.sanitize(rawHtml, {
+        ADD_TAGS: [
+          'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'iframe', 'span',
+          'details', 'summary', 'svg', 'path', 'g', 'circle', 'rect', 'line', 'polygon', 'polyline',
+          'p', 'strong', 'em', 'blockquote', 'ul', 'ol', 'li', 'hr', 'a', 'code', 'pre'
+        ],
+        ADD_ATTR: [
+          'id', 'src', 'alt', 'title', 'width', 'height', 'loading', 'style',
+          'class', 'className', 'viewBox', 'fill', 'stroke', 'stroke-width',
+          'stroke-linecap', 'stroke-linejoin', 'xmlns', 'target', 'rel', 'd', 'href'
+        ],
+      });
+    } catch (err) {
+      console.error('Error rendering markdown:', err);
+      return `<p>${body}</p>`;
+    }
+  }, [body, slug]);
+
   if (!post) {
     return (
       <div className="blog-post fade-in">
@@ -180,49 +231,6 @@ export default function BlogPost({ slug }) {
       </div>
     );
   }
-
-  // Custom marked renderer to resolve relative image paths to either the post folder or the direct posts folder
-  const renderer = new marked.Renderer();
-  renderer.image = ({ href, title, text }) => {
-    let src = href;
-    if (
-      src &&
-      !src.startsWith('http://') &&
-      !src.startsWith('https://') &&
-      !src.startsWith('data:') &&
-      !src.startsWith('/') &&
-      !src.startsWith('#')
-    ) {
-      const normalizedFilePath = String(post.filePath || '').replace(/\\/g, '/');
-      const isDirectFile = /(?:posts|public\/posts|src\/posts)\/[^/]+\.md$/i.test(normalizedFilePath);
-      const cleanSrc = src.replace(/^\.\//, '');
-      src = isDirectFile
-        ? getAssetUrl(`posts/${cleanSrc}`)
-        : getAssetUrl(`posts/${slug}/${cleanSrc}`);
-    }
-    const titleAttr = title ? ` title="${title}"` : '';
-    const altAttr = text ? ` alt="${text}"` : '';
-    return `<img src="${src}"${altAttr}${titleAttr} loading="lazy" />`;
-  };
-
-  marked.setOptions({
-    breaks: false,
-    gfm: true,
-    renderer,
-  });
-
-  const rawHtml = marked.parse(body);
-  const safeHtml = DOMPurify.sanitize(rawHtml, {
-    ADD_TAGS: [
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'iframe', 'span',
-      'details', 'summary', 'svg', 'path', 'g', 'circle', 'rect', 'line', 'polygon', 'polyline'
-    ],
-    ADD_ATTR: [
-      'id', 'src', 'alt', 'title', 'width', 'height', 'loading', 'style',
-      'class', 'className', 'viewBox', 'fill', 'stroke', 'stroke-width',
-      'stroke-linecap', 'stroke-linejoin', 'xmlns', 'target', 'rel', 'd'
-    ],
-  });
 
   const formattedDate = meta.date
     ? new Date(meta.date).toLocaleDateString('en-US', {

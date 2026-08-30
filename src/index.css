@@ -1973,9 +1973,25 @@ a:hover {
 .blog-post--army .prose,
 .blog-post--army .blog-text-box,
 .service-page--army .blog-text-box {
-  background: rgba(12, 22, 10, 0.72);
-  border-color: rgba(163, 199, 72, 0.32);
+  background: rgba(14, 26, 12, 0.90);
+  border-color: rgba(163, 199, 72, 0.35);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(140, 195, 60, 0.08), inset 0 1px 0 rgba(180, 230, 80, 0.06);
+  color: #e2ecd8;
+}
+
+.blog-post--army .blog-post__title,
+.blog-post--army .prose h1,
+.blog-post--army .prose h2,
+.blog-post--army .prose h3,
+.blog-post--army .prose h4 {
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.blog-post--army .prose p,
+.blog-post--army .prose li,
+.blog-post--army .prose span {
+  color: #e2ecd8;
 }
 
 .blog-post--army .blog-post__back {
@@ -2000,16 +2016,33 @@ a:hover {
 
 .blog-post--army .prose blockquote {
   border-left-color: #9cb852;
-  background: rgba(28, 44, 16, 0.30);
+  background: rgba(28, 44, 16, 0.45);
+  color: #f7fee7;
 }
 
 .blog-post--navy .blog-post__header,
 .blog-post--navy .prose,
 .blog-post--navy .blog-text-box,
 .service-page--navy .blog-text-box {
-  background: rgba(4, 14, 38, 0.72);
-  border-color: rgba(96, 165, 250, 0.32);
+  background: rgba(4, 14, 38, 0.90);
+  border-color: rgba(96, 165, 250, 0.35);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(74, 125, 255, 0.08), inset 0 1px 0 rgba(100, 150, 255, 0.06);
+  color: #dbeafe;
+}
+
+.blog-post--navy .blog-post__title,
+.blog-post--navy .prose h1,
+.blog-post--navy .prose h2,
+.blog-post--navy .prose h3,
+.blog-post--navy .prose h4 {
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.blog-post--navy .prose p,
+.blog-post--navy .prose li,
+.blog-post--navy .prose span {
+  color: #dbeafe;
 }
 
 .blog-post--navy .blog-post__back {
@@ -2034,16 +2067,33 @@ a:hover {
 
 .blog-post--navy .prose blockquote {
   border-left-color: #3b82f6;
-  background: rgba(10, 24, 60, 0.30);
+  background: rgba(10, 24, 60, 0.45);
+  color: #eff6ff;
 }
 
 .blog-post--airforce .blog-post__header,
 .blog-post--airforce .prose,
 .blog-post--airforce .blog-text-box,
 .service-page--airforce .blog-text-box {
-  background: rgba(4, 18, 38, 0.72);
-  border-color: rgba(56, 189, 248, 0.32);
+  background: rgba(4, 18, 38, 0.90);
+  border-color: rgba(56, 189, 248, 0.35);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.08), inset 0 1px 0 rgba(56, 189, 248, 0.06);
+  color: #e0f2fe;
+}
+
+.blog-post--airforce .blog-post__title,
+.blog-post--airforce .prose h1,
+.blog-post--airforce .prose h2,
+.blog-post--airforce .prose h3,
+.blog-post--airforce .prose h4 {
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.blog-post--airforce .prose p,
+.blog-post--airforce .prose li,
+.blog-post--airforce .prose span {
+  color: #e0f2fe;
 }
 
 .blog-post--airforce .blog-post__back {
@@ -2068,7 +2118,8 @@ a:hover {
 
 .blog-post--airforce .prose blockquote {
   border-left-color: #0284c7;
-  background: rgba(8, 28, 52, 0.30);
+  background: rgba(8, 28, 52, 0.45);
+  color: #f0f9ff;
 }
 
 .prose h1,
