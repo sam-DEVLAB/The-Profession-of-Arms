@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react';
+import {
+  getPostMetrics,
+  getUserLikeStatus,
+  togglePostLike,
+  syncSinglePostMetrics,
+} from '../postMetrics';
 
 /**
  * PostInteractions — Like button, comment section, and toggleable
  * GitHub & AllPoetry social link widgets for blog posts.
  */
 export default function PostInteractions({ slug, allpoetry, onMetricsChange, showCounts = true }) {
-  const likeKey = `pe_likes_${slug}`;
   const commentKey = `pe_comments_${slug}`;
 
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
+  const [liked, setLiked] = useState(() => getUserLikeStatus(slug));
+  const [likeCount, setLikeCount] = useState(() => getPostMetrics(slug).likes);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [authorName, setAuthorName] = useState('');
@@ -19,16 +24,14 @@ export default function PostInteractions({ slug, allpoetry, onMetricsChange, sho
   const [showAllPoetryCard, setShowAllPoetryCard] = useState(false);
   const [allpoetryCopied, setAllpoetryCopied] = useState(false);
 
-  // Load from localStorage on mount
+  // Load metrics & comments on mount, and listen for live updates
   useEffect(() => {
-    try {
-      const storedLikes = localStorage.getItem(likeKey);
-      if (storedLikes) {
-        const parsed = JSON.parse(storedLikes);
-        setLiked(parsed.liked || false);
-        setLikeCount(parsed.count || 0);
-      }
+    // 1. Initial local state
+    setLiked(getUserLikeStatus(slug));
+    const currentMetrics = getPostMetrics(slug);
+    setLikeCount(currentMetrics.likes);
 
+    try {
       const storedComments = localStorage.getItem(commentKey);
       if (storedComments) {
         setComments(JSON.parse(storedComments));
@@ -38,28 +41,37 @@ export default function PostInteractions({ slug, allpoetry, onMetricsChange, sho
       if (savedName) {
         setAuthorName(savedName);
       }
-
-      onMetricsChange?.({
-        reads: 0,
-        likes: storedLikes ? JSON.parse(storedLikes).count || 0 : 0,
-        comments: storedComments ? JSON.parse(storedComments).length : 0,
-      });
     } catch {
       // Ignore localStorage errors
     }
-  }, [likeKey, commentKey]);
+
+    onMetricsChange?.(currentMetrics);
+
+    // 2. Background sync from cloud database
+    syncSinglePostMetrics(slug);
+
+    // 3. Listen to reactive updates
+    const handleMetricsUpdate = (e) => {
+      const targetSlug = e?.detail?.slug;
+      if (!targetSlug || targetSlug === slug || targetSlug === '__all__') {
+        const updated = getPostMetrics(slug);
+        setLikeCount(updated.likes);
+        setLiked(getUserLikeStatus(slug));
+        onMetricsChange?.(updated);
+      }
+    };
+
+    window.addEventListener('poa-metrics-updated', handleMetricsUpdate);
+    return () => {
+      window.removeEventListener('poa-metrics-updated', handleMetricsUpdate);
+    };
+  }, [slug, commentKey]);
 
   function handleLike() {
-    const newLiked = !liked;
-    const newCount = newLiked ? likeCount + 1 : Math.max(0, likeCount - 1);
-    setLiked(newLiked);
-    setLikeCount(newCount);
-    try {
-      localStorage.setItem(likeKey, JSON.stringify({ liked: newLiked, count: newCount }));
-    } catch {
-      // Ignore
-    }
-    onMetricsChange?.({ reads: 0, likes: newCount, comments: comments.length });
+    const res = togglePostLike(slug);
+    setLiked(res.liked);
+    setLikeCount(res.metrics.likes);
+    onMetricsChange?.(res.metrics);
   }
 
   function handleSubmitComment(e) {
@@ -87,7 +99,7 @@ export default function PostInteractions({ slug, allpoetry, onMetricsChange, sho
     } catch {
       // Ignore
     }
-    onMetricsChange?.({ reads: 0, likes: likeCount, comments: updated.length });
+    onMetricsChange?.({ ...getPostMetrics(slug), comments: updated.length });
   }
 
   function handleDeleteComment(commentId) {
@@ -98,7 +110,7 @@ export default function PostInteractions({ slug, allpoetry, onMetricsChange, sho
     } catch {
       // Ignore
     }
-    onMetricsChange?.({ reads: 0, likes: likeCount, comments: updated.length });
+    onMetricsChange?.({ ...getPostMetrics(slug), comments: updated.length });
   }
 
   async function handleCopy(url, type) {

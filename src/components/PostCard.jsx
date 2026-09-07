@@ -7,10 +7,22 @@ import { getPostMetrics } from '../postMetrics';
  * Includes a right-side container for the post icon/thumbnail if specified in frontmatter.
  */
 export default function PostCard({ slug, title, date, tags, excerpt, icon, backgroundImage, className = '' }) {
-  const [metrics, setMetrics] = useState({ reads: 0, likes: 0, comments: 0 });
+  const [metrics, setMetrics] = useState(() => getPostMetrics(slug));
 
   useEffect(() => {
     setMetrics(getPostMetrics(slug));
+
+    const handleMetricsUpdate = (e) => {
+      const targetSlug = e?.detail?.slug;
+      if (!targetSlug || targetSlug === slug || targetSlug === '__all__') {
+        setMetrics(getPostMetrics(slug));
+      }
+    };
+
+    window.addEventListener('poa-metrics-updated', handleMetricsUpdate);
+    return () => {
+      window.removeEventListener('poa-metrics-updated', handleMetricsUpdate);
+    };
   }, [slug]);
 
   const formattedDate = new Date(date).toLocaleDateString('en-US', {

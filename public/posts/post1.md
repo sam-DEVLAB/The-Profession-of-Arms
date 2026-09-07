@@ -12,7 +12,7 @@ color: "#0b2f6f"
 
 ![Major Sudhir Kumar, AC, SM*](MSK1.png)
 
-*Major Sudhir Kumar, AC, SM** *
+*Major Sudhir Kumar, AC, SM**.*
 
 Major Sudhir Kumar, AC, SM & Bar was born on 24th May, 1969 in a military hospital in Jodhpur to Subedar Major Rulia Ram and Mrs Rajeswari Devi. His family natively belonged to a village named Banuri in the Kangra district of Himachal Pradesh. Major Sudhir Kumar grew up watching his father serve in the army and he naturally grew an affection towards the Olive Green uniform. This affection for the uniform was turned into firm resolve to wear it at Sainik School, Sujanpur Tihra. After completing school, he went by the book to become an army officer by joining the 72nd course at the National Defence Academy in 1984 at the age of 16. Thereafter he underwent three years of gruelling training at the National Defence Academy which turned the young boy into a man capable of leading men into battles.
 

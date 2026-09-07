@@ -21,7 +21,7 @@ export default function BlogPost({ slug }) {
 
   const meta = post?.meta || {};
   const body = post?.body || '';
-  const [metrics, setMetrics] = useState(() => getPostMetrics(slug));
+  const [metrics, setMetrics] = useState(() => getPostMetrics(slug, meta));
   const [readerTheme, setReaderTheme] = useState(() => {
     try {
       const saved = localStorage.getItem('pe_reader_theme');
@@ -41,8 +41,20 @@ export default function BlogPost({ slug }) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setMetrics(recordPostRead(slug));
-  }, [slug]);
+    setMetrics(recordPostRead(slug, meta));
+
+    const handleMetricsUpdate = (e) => {
+      const targetSlug = e?.detail?.slug;
+      if (!targetSlug || targetSlug === slug || targetSlug === '__all__') {
+        setMetrics(getPostMetrics(slug, meta));
+      }
+    };
+
+    window.addEventListener('poa-metrics-updated', handleMetricsUpdate);
+    return () => {
+      window.removeEventListener('poa-metrics-updated', handleMetricsUpdate);
+    };
+  }, [slug, post]);
 
   useEffect(() => {
     try {

@@ -36,5 +36,15 @@ export const siteConfig = {
   social: {
     allpoetry: 'https://allpoetry.com',
   },
+
+  // Blog Post Metrics Configuration
+  metrics: {
+    // Configurable via private environment variables (.env.local)
+    defaultBaselineReads: Number(import.meta.env.VITE_METRICS_READS) || 0,
+    defaultBaselineLikes: Number(import.meta.env.VITE_METRICS_LIKES) || 0,
+
+    // Cloud Database configuration (Firebase Realtime Database REST API)
+    firebaseDatabaseUrl: import.meta.env.VITE_FIREBASE_DB_URL || '',
+  },
 };
 

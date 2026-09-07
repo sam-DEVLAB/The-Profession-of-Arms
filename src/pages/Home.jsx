@@ -4,7 +4,7 @@ import PostCard from '../components/PostCard';
 import WorldMapGrid from '../components/WorldMapGrid';
 import BlogShowcase from '../components/BlogShowcase';
 import { getAllPosts } from '../posts';
-import { getPostMetrics } from '../postMetrics';
+import { getPostMetrics, syncAllPostMetrics } from '../postMetrics';
 import { siteConfig } from '../site.config';
 import { getAssetUrl } from '../utils/assets';
 
@@ -22,16 +22,36 @@ const TYPING_PHRASES = [
  */
 export default function Home() {
   const posts = useMemo(() => getAllPosts(), []);
-  const [postMetrics, setPostMetrics] = useState({});
+  const [postMetrics, setPostMetrics] = useState(() => {
+    const initial = {};
+    posts.forEach((post) => {
+      initial[post.slug] = getPostMetrics(post.slug, post.meta);
+    });
+    return initial;
+  });
   const [isFlipped, setIsFlipped] = useState(false);
   const [homeSearchQuery, setHomeSearchQuery] = useState('');
 
   useEffect(() => {
-    const metrics = {};
-    posts.forEach((post) => {
-      metrics[post.slug] = getPostMetrics(post.slug);
-    });
-    setPostMetrics(metrics);
+    function computeMetrics() {
+      const metrics = {};
+      posts.forEach((post) => {
+        metrics[post.slug] = getPostMetrics(post.slug, post.meta);
+      });
+      setPostMetrics(metrics);
+    }
+
+    computeMetrics();
+    syncAllPostMetrics();
+
+    const handleUpdate = () => {
+      computeMetrics();
+    };
+
+    window.addEventListener('poa-metrics-updated', handleUpdate);
+    return () => {
+      window.removeEventListener('poa-metrics-updated', handleUpdate);
+    };
   }, [posts]);
 
   // Typewriter text animation matching shivenderkanwar.com
