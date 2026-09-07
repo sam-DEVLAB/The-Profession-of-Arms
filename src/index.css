@@ -875,14 +875,32 @@ a:hover {
   object-fit: contain;
   padding: 10px;
   filter:
-    drop-shadow(0 0 10px rgba(255, 215, 0, 0.8))
+    drop-shadow(0 0 10px rgba(255, 255, 255, 0.8))
     drop-shadow(0 4px 14px rgba(0, 0, 0, 0.7));
   transition: filter var(--duration-normal) var(--ease-out);
 }
 
 .home__hero-avatar-wrapper--back:hover .home__hero-avatar--back {
   filter:
-    drop-shadow(0 0 16px rgba(255, 215, 0, 0.95))
+    drop-shadow(0 0 16px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 6px 18px rgba(0, 0, 0, 0.8));
+}
+
+.home__hero-avatar-wrapper--glow-army .home__hero-avatar--back {
+  filter:
+    drop-shadow(0 0 20px rgba(163, 199, 72, 0.95))
+    drop-shadow(0 6px 18px rgba(0, 0, 0, 0.8));
+}
+
+.home__hero-avatar-wrapper--glow-navy .home__hero-avatar--back {
+  filter:
+    drop-shadow(0 0 20px rgba(96, 165, 250, 0.95))
+    drop-shadow(0 6px 18px rgba(0, 0, 0, 0.8));
+}
+
+.home__hero-avatar-wrapper--glow-airforce .home__hero-avatar--back {
+  filter:
+    drop-shadow(0 0 20px rgba(125, 211, 252, 0.95))
     drop-shadow(0 6px 18px rgba(0, 0, 0, 0.8));
 }
 
@@ -4373,7 +4391,7 @@ a:hover {
 .service-page__glass-card,
 .service-page__stat-card,
 .service-page__stories-section {
-  border-radius: 0;
+  border-radius: 16px;
 }
 
 .service-page__glass-card {

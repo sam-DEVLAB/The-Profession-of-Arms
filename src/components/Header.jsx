@@ -32,6 +32,11 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
+    // Reset custom title whenever we navigate to a new page (especially Home)
+    setCustomTitle(null);
+  }, [location.pathname]);
+
+  useEffect(() => {
     setPreviewWord(serviceWord);
   }, [serviceWord]);
 

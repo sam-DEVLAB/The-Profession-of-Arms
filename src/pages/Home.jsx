@@ -31,6 +31,7 @@ export default function Home() {
   });
   const [isFlipped, setIsFlipped] = useState(false);
   const [homeSearchQuery, setHomeSearchQuery] = useState('');
+  const [activeHoverService, setActiveHoverService] = useState(null);
 
   useEffect(() => {
     function computeMetrics() {
@@ -158,6 +159,7 @@ export default function Home() {
   }, [posts, homeSearchQuery]);
 
   const handleBadgeHover = (service) => {
+    setActiveHoverService(service);
     const titles = {
       army: 'THE INDIAN ARMY',
       navy: 'THE INDIAN NAVY',
@@ -280,7 +282,7 @@ export default function Home() {
 
               {/* Back: Tri-services emblem */}
               <div className="hero-flip-back">
-                <div className="home__hero-avatar-wrapper home__hero-avatar-wrapper--back">
+                <div className={`home__hero-avatar-wrapper home__hero-avatar-wrapper--back ${activeHoverService ? `home__hero-avatar-wrapper--glow-${activeHoverService}` : ''}`}>
                   <img
                     src={getAssetUrl('Indian_Armed_Forces_Triservices.png')}
                     alt="Indian Armed Forces Triservices Emblem"
