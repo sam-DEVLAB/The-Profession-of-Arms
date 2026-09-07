@@ -16,7 +16,6 @@ import {
  */
 
 const USER_LIKED_PREFIX = 'pe_user_liked_';
-const SESSION_READ_PREFIX = 'pe_session_read_';
 
 /**
  * Resolves baseline numbers for a post (frontmatter overrides or global defaults).
@@ -56,24 +55,10 @@ export function getPostMetrics(slug, meta = {}) {
 }
 
 /**
- * Record a read event for a post (increment cloud & local count).
+ * Record a read event for a post (increments views on each open).
  */
 export function recordPostRead(slug, meta = {}) {
-  let alreadyReadThisSession = false;
-  try {
-    alreadyReadThisSession = sessionStorage.getItem(`${SESSION_READ_PREFIX}${slug}`) === '1';
-    if (!alreadyReadThisSession) {
-      sessionStorage.setItem(`${SESSION_READ_PREFIX}${slug}`, '1');
-    }
-  } catch {
-    // Ignore sessionStorage errors
-  }
-
-  // Only increment if newly read in this session (avoids spam on page refreshes)
-  if (!alreadyReadThisSession) {
-    incrementRemoteRead(slug);
-  }
-
+  incrementRemoteRead(slug);
   return getPostMetrics(slug, meta);
 }
 
